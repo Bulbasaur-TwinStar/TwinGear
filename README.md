@@ -22,7 +22,7 @@ No more guessing stat weights or missing caps before a raid:
   * Tracks Caster Hit Cap (**15.00%**) with exact rating surplus/deficit calculation (tells you precisely how much Hit rating to reforge away or add).
   * Tracks Melee & Ranged Hit (**7.50%**) and Expertise (**7.50%** DPS / **15.00%** Tank Hard Cap).
   * Smart **Leveling Mode (`< 90`)** so leveling alts are never flagged with false red cap warnings.
-* **Caster Haste Breakpoints:** Live tracking for **BP 1 (`5,273`)** and **BP 2 (`10,289`)** with exact rating needed for the next breakpoint.
+* **Caster Haste Breakpoints:** (All 13 Caster & Healer Specs): Live tracking for exact MoP 5.4.8 raid haste breakpoints across all caster and healer specs (including Goblin +1% haste racial support and target inspect calculations).
 * **Healer & PvP Precision:** Displays real **Combat Mana Regen (MP5)** for all healing specs and **PvP Power & PvP Resilience** whenever PvP gear is equipped.
 
 ### 2. 🛡️ Deep Equipment, Upgrade & Consumable Audit
@@ -37,7 +37,7 @@ No more guessing stat weights or missing caps before a raid:
 Built for **5-man RDF & Challenge Modes**, **10/25-man Heroic, Normal & Flex raids**, and **40-man World Boss groups**:
 * **Lag-Free Asynchronous Inspect Queue:** Safely scans **up to 40 players** across every group size with smooth mouse-wheel scrolling, cross-realm support (Helios & Persés), smart RDF bot detection, and zero FPS drops in combat.
 * **Instant Raid Readiness Overview:** Displays Tank/Healer/DPS role breakdown, group average iLvl, missing buff tags (`[NoF/NoW]`), Legendary Cloak tags (`[Leg]`), and gear audit status (`OK` or missing gems/enchants).
-* **Clean One-Click Raid Leader Chat Report:** Hover over **Report to Chat** for a full readiness summary, or click to announce **only missing Flasks & Food** directly to `/raid`, `/party`, or `/say` without spamming chat with gem/enchant details.
+* **Clean One-Click Raid Leader Chat Report:** Hover over Report to Chat for a full readiness summary, or click to announce all missing Flasks & Food directly to /raid, /party, or /say (automatically split into clean 12-player chunks so no names are cut off in 25/40-man raids).
 * **TwinGear Peer Sync & Auto-Update Alerts:** Automatically exchanges full primary profession skills (`600/600`) with other TwinGear users and notifies you in chat when a newer version is released on GitHub.### 4. 🌟 Account Roster, Currencies & Weekly Tracker (`Alts & MoP`)
 Manage your entire TwinStar account from one clean screen:
 * **Up to 50 Account Alts (Mouse-Wheel Scrollable):** Automatically saves every character you log into, sorted by iLvl with official **WoW Class Colors**, spec, level, Siege of Orgrimmar progression, and professions.
@@ -56,12 +56,18 @@ Manage your entire TwinStar account from one clean screen:
 
 ## 🎮 Slash Commands & Controls
 
+
 | Command / Control | Action |
 | :--- | :--- |
 | `/tg` or `/twingear` | Toggle the main TwinGear window |
+| `/tg scan` | Open **Group Scan** & immediately scan party/raid |
+| `/tg tooltip` | Toggle iLvl & spec in mouseover player tooltip |
+| `/tg minimap` | Toggle minimap icon visibility |
+| `/tg reset` | Reset main window position & scale |
 | `/tgclearalts` | Reset the saved account character roster (`Alts & MoP`) |
 | **Character (`C`) / Inspect Frame** | Click the dark-gold **TwinGear** button in the top-right header |
 | **Key Bindings** | `Esc -> Key Bindings -> TwinGear v2.2` to bind a custom toggle key |
+
 
 ---
 
