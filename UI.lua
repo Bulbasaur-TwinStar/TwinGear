@@ -181,7 +181,7 @@ function TG:InitUI()
 
     local ver = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     ver:SetPoint("BOTTOMRIGHT", -14, 16)
-    ver:SetText("|cffffd100Twin|r|cff00ff00Gear|r v2.2.1")
+    ver:SetText("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2")
     f:SetScale(TwinGearDB and TwinGearDB.scale or 1.0)
 
     local p1 = CreateFrame("Frame", nil, f)
@@ -837,7 +837,7 @@ function TG:InitMinimap()
 
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:AddLine("|cffffd100Twin|r|cff00ff00Gear|r v2.2.1")
+        GameTooltip:AddLine("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2")
         GameTooltip:AddLine("|cffccccccLeft-Click:|r Toggle Window", 1, 1, 1)
         GameTooltip:AddLine("|cffccccccRight-Click:|r Scan Group / Raid", 1, 1, 1)
         GameTooltip:AddLine("|cffccccccDrag:|r Move Icon", 1, 1, 1)

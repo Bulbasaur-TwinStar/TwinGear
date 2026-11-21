@@ -129,7 +129,7 @@ function TG:RequestSyncData(unit)
     elseif UnitFactionGroup(unit) == UnitFactionGroup("player") then
         suppressErrorUntil = GetTime() + 1.5
         SendAddonMessage(PREFIX, "REQ", "WHISPER", name)
-        SendAddonMessage("TWINGEAR", "VER|" .. (GetAddOnMetadata("TwinGear", "Version") or "2.2.1"), "WHISPER", name)
+        SendAddonMessage("TWINGEAR", "VER|" .. (GetAddOnMetadata("TwinGear", "Version") or "2.2.2"), "WHISPER", name)
     end
 end
 
@@ -163,7 +163,7 @@ function TG:InitSync()
     end)
 end
 
-local MY_VER = GetAddOnMetadata("TwinGear", "Version") or "2.2.1"
+local MY_VER = GetAddOnMetadata("TwinGear", "Version") or "2.2.2"
 local verNotified = false
 local lastVerBroadcast = 0
 

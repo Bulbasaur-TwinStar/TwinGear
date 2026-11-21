@@ -269,6 +269,6 @@ end
 SLASH_TGCLEARALTS1 = "/tgclearalts"
 SlashCmdList["TGCLEARALTS"] = function()
     if TwinGearDB then TwinGearDB.alts = {} end
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.1: Account alts list cleared.")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2: Account alts list cleared.")
     if TG.RefreshPage4 then TG:RefreshPage4() end
 end

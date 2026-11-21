@@ -2,7 +2,7 @@
 ## Title: |cffffd100Twin|r|cff00ff00Gear|r |cff3399ff2.2|r
 ## Notes: Komunitni MoP 5.4.8 analyza postavy, altu, World Bossu a raidu (TwinStar Helios & Perses)
 ## Author: Bulbasaur of TwinStar
-## Version: 2.2.1
+## Version: 2.2.2
 ## SavedVariables: TwinGearDB
 
 Locales.lua

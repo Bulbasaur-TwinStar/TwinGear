@@ -1,4 +1,4 @@
-BINDING_HEADER_TWINGEAR = "TwinGear 2.2.1"
+BINDING_HEADER_TWINGEAR = "TwinGear 2.2.2"
 BINDING_NAME_TWINGEAR_TOGGLE = "Toggle TwinGear Window"
 
 local addonName, TG = ...
@@ -492,7 +492,7 @@ ev:SetScript("OnEvent", function(self, event, arg1)
         if TG.InitSync then TG:InitSync() end
 
     elseif event == "PLAYER_ENTERING_WORLD" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.1 loaded. Type |cffffd100/tg|r to open or |cffffd100/tg help|r for commands.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2 loaded. Type |cffffd100/tg|r to open or |cffffd100/tg help|r for commands.")
         TG:ScanUnit("player", false)
         if TG.SaveCurrentAlt and TG.Cache[GetUnitName("player", true)] then
             TG:SaveCurrentAlt(TG.Cache[GetUnitName("player", true)])
@@ -615,7 +615,7 @@ SlashCmdList["TWINGEAR"] = function(msg)
     if not TG.Frame then return end
     local cmd = string.lower(strtrim(msg or ""))
     if cmd == "help" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.1 commands:")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2 commands:")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg|r - Toggle main window")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg scan|r - Open Group Scan & scan party/raid")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg tooltip|r - Toggle iLvl in player tooltip")
