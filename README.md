@@ -23,7 +23,7 @@ TwinGear is a zero-bloat, all-in-one character audit, live stat priority advisor
 
 Manage your entire TwinStar account from one place, featuring an overview of up to 50 characters automatically sorted by iLvl with class colors, specs, levels, Siege of Orgrimmar progression, and professions, as well as daily cooldown tracking, currencies, and weekly tasks (including MoP world bosses, bonus rolls, and Ordos cloak status).
 
-2. ### 🖥 Clean UI Integration & Zero-Bloat Design
+### 🖥 Clean UI Integration & Zero-Bloat Design
 • UI Buttons: Sleek dark-gold TwinGear button integrated into the top corner of the Character (C) and Inspect frames.
 • Tooltips & 3D Preview: Displays iLvl and spec on player mouseover, smooth rotatable 3D character preview, window scaling, inspection history, and key bindings support.
 
