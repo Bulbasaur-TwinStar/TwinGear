@@ -165,6 +165,7 @@ end
 
 local MY_VER = GetAddOnMetadata("TwinGear", "Version") or "2.2.1"
 local verNotified = false
+local lastVerBroadcast = 0
 
 local function ParseVer(v)
     local a, b, c = string.match(tostring(v or ""), "(%d+)%.(%d+)%.?(%d*)")
@@ -188,6 +189,8 @@ verFrame:SetScript("OnEvent", function(_, event, prefix, msg)
         local rv = string.match(msg, "^VER|([%d%.]+)")
         if rv then CheckRemoteVer(rv) end
     elseif event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
+        if (GetTime() - lastVerBroadcast) < 10 then return end
+        lastVerBroadcast = GetTime()
         if IsInGuild() then SendAddonMessage("TWINGEAR", "VER|" .. MY_VER, "GUILD") end
         if IsInRaid() then SendAddonMessage("TWINGEAR", "VER|" .. MY_VER, "RAID")
         elseif IsInGroup() then SendAddonMessage("TWINGEAR", "VER|" .. MY_VER, "PARTY") end

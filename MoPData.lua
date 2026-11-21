@@ -248,7 +248,7 @@ function TG:SaveCurrentAlt(d)
     local key = (UnitName("player") or "Unknown") .. "-" .. (GetRealmName() or "TwinStar")
     TwinGearDB.alts[key] = {
         name = UnitName("player"), realm = GetRealmName(), classToken = classToken,
-        spec = specName .. " " .. (className or ""), level = UnitLevel("player") or 90,
+        spec = (specName ~= "" and (specName .. " ") or "") .. (className or ""), level = UnitLevel("player") or 90,
         ilvl = d.ilvl or 0, wb = TG:GetMyWorldBosses(), profs = pr, raid = soo,
         cds = TG:GetReadyDailyCooldowns()
     }

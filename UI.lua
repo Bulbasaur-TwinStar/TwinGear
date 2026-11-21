@@ -940,6 +940,7 @@ function TG:RefreshPage4()
             cc.r*255, cc.g*255, cc.b*255, a.name or "?", a.spec or "", a.level or 90, iCol, ilvl, (wbs >= 6) and "|cffff4444" or "|cff00ff00", wbs, a.raid or "SoO 0/14", #pr > 0 and table.concat(pr, ", ") or "|cff777777No Profs|r", cdStr))
     end
     p4.Alts:SetText(table.concat(lines, "\n"))
+    if p4.Alts:GetParent() then p4.Alts:GetParent():SetHeight(math.max(225, (p4.Alts:GetStringHeight() or 200) + 25)) end
 end
 
 local uiInitHook = CreateFrame("Frame")
@@ -970,6 +971,7 @@ function TG:ApplyUnitModel(m, u)
     if not m or not u or not UnitExists(u) then return end
     m:ClearModel()
     m:SetUnit(u)
+    if m.RefreshUnit then m:RefreshUnit() end
     m:SetPosition(-0.28, 0, 0)
 end
 

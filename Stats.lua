@@ -221,7 +221,8 @@ function TG:EstimateTargetStats(unit, class, specID, lines, armorOk)
     local primCrit = isSpell and (s.INT / 2533) or (not isStr and (s.AGI / 2533) or 0)
     local critPct = 5.0 + (s.CRIT / 600) + primCrit + critBonus
     local baseHaste = s.HASTE / 425
-    local hastePct = isSpell and (((1 + baseHaste / 100) * spellHasteMult - 1) * 100) or (((1 + baseHaste / 100) * meleeHasteMult - 1) * 100)
+    local gobMult = (race == "Goblin") and 1.01 or 1.0
+    local hastePct = isSpell and (((1 + baseHaste / 100) * spellHasteMult * gobMult - 1) * 100) or (((1 + baseHaste / 100) * meleeHasteMult * gobMult - 1) * 100)
     local mastPct = ((UnitLevel(unit) or 0) >= 80) and ((8.0 + (s.MAST / 600)) * GetMasteryMult(specID)) or 0
     local spiToHit = (specID == 102 or specID == 258 or specID == 262) and s.SPI or 0
     local hitPct = (((isSpell and (s.HIT + spiToHit) or s.HIT)) / 340) + hitBonus
