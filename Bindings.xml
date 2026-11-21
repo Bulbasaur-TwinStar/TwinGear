@@ -1,0 +1,5 @@
+<Bindings>
+    <Binding name="TWINGEAR_TOGGLE" header="TWINGEAR">
+        if SlashCmdList["TWINGEAR"] then SlashCmdList["TWINGEAR"]("") end
+    </Binding>
+</Bindings>
