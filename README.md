@@ -10,7 +10,7 @@
 
 ⚔️ TwinGear v2.2.3 — The Ultimate Gear Audit, Stat Engine, Group & Raid Scanner & Account Roster for TwinStar (MoP 5.4.8)
 
-TwinGear is a zero-bloat, all-in-one character audit, live stat priority advisor, group/raid readiness scanner (5/10/25/40 players), and account-wide alt manager for TwinStar WoW — Mists of Pandaria 5.4.8 (Helios & Persés), supporting all 11 classes, 34 specs, and client languages.
+TwinGear is a zero-bloat, all-in-one character audit, live stat priority advisor, group/raid readiness scanner (5/10/25/40 players), and account-wide alt manager for TwinStar WoW — Mists of Pandaria 5.4.8 (Helios & Persés), supporting all 11 classes, 34 specs.
 
 🔥 Key Features Overview
 
