@@ -8,39 +8,47 @@
 
 
 
-⚔️ TwinGear v2.2.3 — The Ultimate Gear Audit, Stat Engine, Group & Raid Scanner & Account Roster for TwinStar (MoP 5.4.8)
 
-TwinGear is a zero-bloat, all-in-one character audit, live stat priority advisor, group/raid readiness scanner (5/10/25/40 players), and account-wide alt manager for TwinStar WoW — Mists of Pandaria 5.4.8 (Helios & Persés), supporting all 11 classes, 34 specs.
+# ⚔️ TwinGear v2.2.4 — The Ultimate Gear Audit, Stat Engine, Group & Raid Scanner & Account Roster for TwinStar (MoP 5.4.8)
 
-🔥 Key Features Overview
+**TwinGear** is a zero-bloat, all-in-one character audit, live stat priority advisor, group/raid readiness scanner (5/10/25/40 players), and account-wide alt manager for **TwinStar WoW — Mists of Pandaria 5.4.8 (Helios & Persés)**, supporting all **11 classes, 34 specs**.
 
-• 11-Class & 34-Spec Stat Priority Engine: Automatically sorts stats by MoP 5.4.8 priorities, tracks Caster/Melee Hit and Expertise caps, manages leveling mode (< 90), calculates caster/healer haste breakpoints, and monitors MP5 mana regen and PvP stats.
-• Deep Equipment, Upgrade & Consumable Audit: Calculates true equipped item levels (handling Titan's Grip), tracks Legendary Cloaks and Meta Gems, checks T14/T15/T16 set bonuses, audits upgrades (0/2 to 4/4), empty sockets, missing enchants/belt buckles, and scans all MoP 5.4.8 flasks, elixirs, and food.
-• Universal Group & Raid Scanner (5–40 Players): Features an asynchronous inspect queue for up to 40 players with zero combat FPS drops, instant readiness overviews (role breakdown, average iLvl, missing buffs/cloaks), one-click raid leader chat reports, and peer-to-peer profession syncing.
+---
 
+### 🔥 Key Features Overview
+
+* **Verified `(Exact)` vs. `(Gear Audit)` System (11 Classes & 34 Specs):**
+  * **With TwinGear `(Exact)`:** Automatically sorts stats by MoP 5.4.8 priorities, tracks Caster/Melee Hit and Expertise caps, manages leveling mode (`< 90`), calculates caster/healer haste breakpoints, monitors MP5 mana regen and PvP stats, and shares 100% exact character stats, raid progression (`LFR/Flex/Norm/HC`), and Challenge Mode medals via background P2P sync.
+  * **Without TwinGear `(Gear Audit)`:** Displays a 100% verified **Live Gear & PvE Readiness Audit** (`Health`, `Equipped iLvl`, `Weapons MH/OH`, `Trinkets`, `Gemmed Sockets`, `Enchanted Slots`, `Valor Upgrades`, `PvP Gear`, and overall `READY` / `INCOMPLETE` status) with an interactive P2P Sync tooltip.
+* **Deep Equipment, Upgrade & Consumable Audit:** Calculates true equipped item levels (handling Titan's Grip), tracks Legendary Cloaks and Meta Gems, checks T14/T15/T16 set bonuses, audits upgrades (`0/2` to `4/4`), empty sockets, missing enchants/belt buckles, and scans all MoP 5.4.8 flasks, elixirs, and food.
+* **Universal Group & Raid Scanner (5–40 Players):** Features an asynchronous inspect queue for up to 40 players with zero combat FPS drops, instant readiness overviews (role breakdown, average iLvl, missing buffs/cloaks), one-click raid leader chat reports, and peer-to-peer profession syncing.
 
 ### 🌟 Account Roster, Currencies & Weekly Tracker (Alts & MoP)
 
-Manage your entire TwinStar account from one place, featuring an overview of up to 50 characters automatically sorted by iLvl with class colors, specs, levels, Siege of Orgrimmar progression, and professions, as well as daily cooldown tracking, currencies, and weekly tasks (including MoP world bosses, bonus rolls, and Ordos cloak status).
+Manage your entire TwinStar account from one place, featuring an overview of up to **50 characters** automatically sorted by iLvl with class colors, specs, levels, Siege of Orgrimmar progression, Warforged Seals, and professions, as well as daily cooldown tracking, currencies, and weekly tasks (including MoP world bosses, bonus rolls, and Ordos cloak status).
 
 ### 🖥 Clean UI Integration & Zero-Bloat Design
-• UI Buttons: Sleek dark-gold TwinGear button integrated into the top corner of the Character (C) and Inspect frames.
-• Tooltips & 3D Preview: Displays iLvl and spec on player mouseover, smooth rotatable 3D character preview, window scaling, inspection history, and key bindings support.
 
-🎮 Slash Commands & Controls
+* **UI Buttons:** Sleek dark-gold `TwinGear` button integrated into the top corner of the Character (`C`) and Inspect frames.
+* **Tooltips & 3D Preview:** Displays iLvl and spec on player mouseover, smooth rotatable 3D character preview, window scaling, inspection history, and key bindings support.
 
+---
 
-Command / Action	Description
-/tg or /twingear	Toggle the main TwinGear window
-/tg scan	Run a party/raid scan
-/tg tooltip / /tg minimap / /tg reset	Toggle mouseover tooltip, minimap icon, or reset window
-/tgclearalts	Clear the saved character roster
-Key Bindings	Configure in Esc -> Key Bindings -> TwinGear 2.2.3
+### 🎮 Slash Commands & Controls
 
+| Command / Action | Description |
+| :--- | :--- |
+| `/tg` or `/twingear` | Toggle the main TwinGear window |
+| `/tg scan` | Run a party/raid scan |
+| `/tg tooltip` / `/tg minimap` / `/tg reset` | Toggle mouseover tooltip, minimap icon, or reset window |
+| `/tgclearalts` | Clear the saved character roster |
+| **Key Bindings** | Configure in `Esc -> Key Bindings -> TwinGear 2.2.4` |
 
-📥 Download & Installation
+---
 
-1. Download TwinGear-2.2.3.zip from the official Latest Release.
+### 📥 Download & Installation
+
+1. Download **`TwinGear-2.2.4.zip`** from the official [Latest Release](https://github.com).
 2. Extract the archive.
-3. Copy the TwinGear folder into World of Warcraft\Interface\AddOns\.
-4. Restart the game or type /reload
+3. Copy the **`TwinGear`** folder into `World of Warcraft\Interface\AddOns\`.
+4. Restart the game or type `/reload`.
