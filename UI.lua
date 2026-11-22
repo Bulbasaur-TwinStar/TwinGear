@@ -972,7 +972,8 @@ function TG:RefreshPage4()
         local ilvl = a.ilvl or 0
         local iCol = (ilvl >= 550 and "|cffff8000") or (ilvl >= 510 and "|cffa335ee") or (ilvl >= 460 and "|cff0070dd") or "|cff1eff00"
         local wbs = 0; for _, w in ipairs(a.wb or {}) do if w.killed then wbs = wbs + 1 end end
-        local pr = {}; for _, x in ipairs(a.profs or {}) do table.insert(pr, "|cffcccccc" .. string.sub(x.name, 1, 4) .. ".|r |cffffd100" .. x.skill .. "|r") end
+        local pMap = { Engineering="Eng", Tailoring="Tailor", Inscription="Insc", Leatherworking="LW", Blacksmithing="BS", Jewelcrafting="JC", Enchanting="Ench", Alchemy="Alch", Herbalism="Herb", Mining="Mine", Skinning="Skin" }
+        local pr = {}; for _, x in ipairs(a.profs or {}) do table.insert(pr, "|cffcccccc" .. (pMap[x.name] or string.sub(x.name, 1, 4)) .. "|r |cffffd100" .. x.skill .. "|r") end
         local sealStr = ""
         if a.seals ~= nil then
             local sCol = a.seals > 0 and "|cffa335ee" or "|cffff4444"
