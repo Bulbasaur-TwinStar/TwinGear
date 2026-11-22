@@ -1,12 +1,18 @@
+<p align="center">
+  <img width="49%" alt="Summary Exact Stats" src="https://github.com/user-attachments/assets/d798e64b-07ec-4ea4-b1fb-563ad2bb3956" />
+  <img width="49%" alt="Summary Live Gear Audit" src="https://github.com/user-attachments/assets/73e8c081-5233-427f-ab20-09c8af11fcb6" />
+</p>
 
-<img width="1856" height="1328" alt="1" src="https://github.com/user-attachments/assets/6df409f0-ebb4-42ec-9cc7-8dcfa89fe7c9" />
-<img width="1849" height="1328" alt="2" src="https://github.com/user-attachments/assets/b4e27933-a7de-4d41-a8a1-996fe05caaba" />
-<img width="1841" height="1326" alt="4" src="https://github.com/user-attachments/assets/dd296b6a-008a-4975-b051-b50bb386cfc8" />
-<img width="485" height="247" alt="5" src="https://github.com/user-attachments/assets/07b61e1b-eb6e-4a9f-aede-00d5085f673e" />
-<img width="1860" height="1329" alt="3" src="https://github.com/user-attachments/assets/494101a8-0462-45bd-93cf-671d6f241ab0" />
+<p align="center">
+  <img width="32%" alt="Equipment Audit" src="https://github.com/user-attachments/assets/b4e27933-a7de-4d41-a8a1-996fe05caaba" />
+  <img width="32%" alt="Group & Raid Scanner" src="https://github.com/user-attachments/assets/494101a8-0462-45bd-93cf-671d6f241ab0" />
+  <img width="32%" alt="Alts & MoP Roster v2.2.4" src="https://github.com/user-attachments/assets/126b7323-0718-44bf-b05a-387d03ef196c" />
+</p>
 
-
-
+<p align="center">
+  <img width="45%" alt="Player Tooltip" src="https://github.com/user-attachments/assets/07b61e1b-eb6e-4a9f-aede-00d5085f673e" />
+  <img width="45%" alt="P2P Sync Info" src="https://github.com/user-attachments/assets/8c9f76ee-0a79-4aea-bbee-8b8ffd6b87bc" />
+</p>
 
 
 # ⚔️ TwinGear v2.2.4 — The Ultimate Gear Audit, Stat Engine, Group & Raid Scanner & Account Roster for TwinStar (MoP 5.4.8)
