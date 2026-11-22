@@ -40,7 +40,7 @@ Key Bindings	Configure in Esc -> Key Bindings -> TwinGear 2.2.3
 
 📥 Download & Installation
 
-1. Download TwinGear_v2.2.3_TwinStar_MoP.zip from the official Latest Release.
+1. Download TwinGear-2.2.3.zip from the official Latest Release.
 2. Extract the archive.
 3. Copy the TwinGear folder into World of Warcraft\Interface\AddOns\.
 4. Restart the game or type /reload
