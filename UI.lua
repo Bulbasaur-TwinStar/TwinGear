@@ -194,7 +194,20 @@ function TG:InitUI()
     for i, lbl in ipairs(aLabels) do
         local r = CreateRow(p1, 20, -55 - (i * 18), 210)
         r.L:SetText(lbl)
-        if i == 7 then
+        if i == 5 then
+            r:EnableMouse(true)
+            r:SetScript("OnEnter", function(self)
+                if not self.tipLines or #self.tipLines == 0 then return end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetFrameStrata("TOOLTIP")
+                GameTooltip:AddLine("|cffffd100Gems & Enchants Audit|r")
+                for _, line in ipairs(self.tipLines) do
+                    GameTooltip:AddLine(line, 0.9, 0.9, 0.9, true)
+                end
+                GameTooltip:Show()
+            end)
+            r:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        elseif i == 7 then
             r:EnableMouse(true)
             r:SetScript("OnEnter", function(self)
                 if not self.profList or #self.profList == 0 then return end
@@ -519,13 +532,23 @@ function TG:UpdateUI(d)
     local refTxt = (d.reforged and d.reforged > 0) and (" |cff00ccff(" .. d.reforged .. " Ref)|r") or ""
     ar[4].R:SetText("|cff00ff00" .. d.upgCur .. " / " .. d.upgMax .. "|r" .. refTxt)
 
-    local auditIssues = {}
-    if d.wrongArmor and d.wrongArmor > 0 then table.insert(auditIssues, "-" .. d.wrongArmor .. " Armor") end
-    if d.missGems > 0 then table.insert(auditIssues, "-" .. d.missGems .. " Gem") end
-    if d.missBuckle then table.insert(auditIssues, "-Belt Buckle") end
-    if d.missEnch > 0 then table.insert(auditIssues, "-" .. d.missEnch .. " Ench") end
-    local auditTxt = #auditIssues == 0 and ("|cff00ff00" .. TG:L("OK") .. " (Full)|r") or ("|cffff3333" .. table.concat(auditIssues, ", ") .. "|r")
-    ar[5].R:SetText(auditTxt)
+    local sTot = d.socTotal or 0
+    local sFil = d.socFilled or 0
+    local eMax = d.enchMax or 0
+    local eCur = d.enchCur or 0
+    local gCol = (sFil == sTot) and "|cff00ff00" or "|cffff3333"
+    local eCol = (eCur == eMax) and "|cff00ff00" or "|cffff3333"
+    local armStr = (d.wrongArmor and d.wrongArmor > 0) and ("|cffff3333-" .. d.wrongArmor .. "A|r ") or ""
+    if sFil == sTot and eCur == eMax and (d.wrongArmor or 0) == 0 then
+        ar[5].R:SetText("|cff00ff00" .. TG:L("OK") .. " (" .. sFil .. "G / " .. eCur .. "E)|r")
+    else
+        ar[5].R:SetText(string.format("%s%s%d/%dG|r  %s%d/%dE|r", armStr, gCol, sFil, sTot, eCol, eCur, eMax))
+    end
+    local tipL = {}
+    if d.wrongArmor and d.wrongArmor > 0 then table.insert(tipL, "|cffff3333Wrong Armor Pieces:|r " .. d.wrongArmor) end
+    if d.missGemSlots and #d.missGemSlots > 0 then table.insert(tipL, "|cffff3333Missing Gems/Buckle:|r " .. table.concat(d.missGemSlots, ", ")) end
+    if d.missEnchSlots and #d.missEnchSlots > 0 then table.insert(tipL, "|cffff3333Missing Enchants:|r " .. table.concat(d.missEnchSlots, ", ")) end
+    ar[5].tipLines = tipL
     ar[6].R:SetText(d.pvp == 0 and "|cff00ff000 (Pure PvE)|r" or ("|cffff3333" .. d.pvp .. " PvP pcs|r"))
 
     local shortProfMap = {

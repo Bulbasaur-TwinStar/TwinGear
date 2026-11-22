@@ -78,7 +78,7 @@ local function DeserializeAndApply(sender, payload)
 
     local shortSender = ShortName(sender)
     local targetKey = TG.Cache[sender] and sender or (TG.Cache[shortSender] and shortSender or sender)
-    local cached = TG.Cache[targetKey] or { name = targetKey, time = GetTime(), ilvl = 0, items = {}, cloak = "None", guild = "No Guild", spec = "", upgCur = 0, upgMax = 0, missGems = 0, missEnch = 0, pvp = 0 }
+    local cached = TG.Cache[targetKey] or { name = targetKey, time = GetTime(), ilvl = 0, items = {}, cloak = "None", guild = "No Guild", spec = "", upgCur = 0, upgMax = 0, socFilled = 0, socTotal = 0, enchCur = 0, enchMax = 0, missGems = 0, missEnch = 0, pvp = 0 }
 
     cached.stats = stats
     cached.isSynced = true

@@ -32,7 +32,7 @@ local function IsEnchantable(slot, loc)
     if slot == 3 or slot == 5 or slot == 7 or slot == 8 or slot == 9 or slot == 10 or slot == 15 or slot == 16 then
         return true
     end
-    return (slot == 17 and loc and loc ~= "" and loc ~= "INVTYPE_HOLDABLE" and loc ~= "INVTYPE_SHIELD")
+    return (slot == 17 and loc and loc ~= "")
 end
 
 local function GetExpectedArmor(class)
@@ -267,7 +267,7 @@ function TG:ScanUnit(unit, showUI)
         level = level, guild = guild, spec = specName or "", specID = specID, role = role,
         isSelf = isSelf, time = GetTime(), ilvl = 0, cloak = "None", hasMeta = false,
         t16 = 0, tiers = { T14 = 0, T15 = 0, T16 = 0 },
-        upgCur = 0, upgMax = 0, missGems = 0, missEnch = 0, missBuckle = false,
+        upgCur = 0, upgMax = 0, socFilled = 0, socTotal = 0, enchCur = 0, enchMax = 0, missGems = 0, missEnch = 0, missBuckle = false, missGemSlots = {}, missEnchSlots = {},
         wrongArmor = 0, reforged = 0, hasEng = false, profs = {}, pvp = 0, items = {}
     }
     local rawLines = {}
@@ -279,7 +279,7 @@ function TG:ScanUnit(unit, showUI)
         if link then
             local iName, _, qual, baseLvl, _, iType, iSubType, _, loc, icon = GetItemInfo(link)
             local id = tonumber(string.match(link, "item:(%d+)")) or 0
-            local realLvl, uCur, uMax, emptySoc, totSoc, isPvp, slotProf = baseLvl or 0, 0, 0, 0, 0, false, nil
+            local realLvl, uCur, uMax, emptySoc, totSoc, isPvp, slotProf, hasTipEnch, tipProf = baseLvl or 0, 0, 0, 0, 0, false, nil, false, nil
             local itemParts = { strsplit(":", string.match(link, "item:([-%d:]+)") or "") }
             local isReforged = (tonumber(itemParts[11]) or 0) > 0
             local isWrongArmor = false
@@ -319,7 +319,16 @@ function TG:ScanUnit(unit, showUI)
                 if not c and string.find(txt, "Upgrade", 1, true) then c, mx = string.match(txt, "(%d+)%s*/%s*(%d+)") end
                 if c and mx and tonumber(mx) and tonumber(mx) <= 6 then uCur, uMax = tonumber(c), tonumber(mx) end
                 if not isReforged and string.find(txt, "(Reforged from", 1, true) then isReforged = true end
-                -- Profession detection handled via Enchant ID below
+                if string.find(txt, "^Enchanted:") then
+                    hasTipEnch = true
+                    if slot == 15 and string.find(txt, "Embroidery", 1, true) then tipProf = "Tailor"
+                    elseif slot == 3 and string.find(txt, "Secret ", 1, true) then tipProf = "Insc"
+                    elseif slot == 9 and string.find(txt, "Fur Lining", 1, true) then tipProf = "LW"
+                    elseif (slot == 11 or slot == 12) then tipProf = "Ench" end
+                elseif slot == 10 and (string.find(txt, "Synapse Springs", 1, true) or string.find(txt, "Phase Fingers", 1, true)) then
+                    hasTipEnch = true
+                    tipProf = "Eng"
+                end
             end
             if isReforged then d.reforged = d.reforged + 1 end
             local pvpSt = GetItemStats and GetItemStats(link)
@@ -351,19 +360,26 @@ function TG:ScanUnit(unit, showUI)
             if uMax > 0 then d.upgMax = d.upgMax + 1; if uCur > 0 then d.upgCur = d.upgCur + 1 end end
 
             d.missGems = d.missGems + emptySoc
+            d.socTotal = d.socTotal + totSoc
+            d.socFilled = d.socFilled + (totSoc - emptySoc)
+            if emptySoc > 0 then table.insert(d.missGemSlots, GetSlotLabel(slot)) end
             local slotMissBuckle = (slot == 6 and realLvl >= 417 and totSoc == 0)
-            if slotMissBuckle then d.missBuckle = true end
+            if slotMissBuckle then
+                d.missBuckle = true
+                d.socTotal = d.socTotal + 1
+                table.insert(d.missGemSlots, "Waist (Buckle)")
+            end
 
             local enchId = tonumber(string.match(link, "item:%d+:(%d+)")) or 0
             local ENG_IDS    = { [4898]=true, [4179]=true, [4223]=true, [4697]=true, [4698]=true }
             local TAILOR_IDS = { [4892]=true, [4893]=true, [4894]=true }
             local INSC_IDS   = { [4912]=true, [4913]=true, [4914]=true, [4915]=true }
             local LW_IDS     = { [4873]=true, [4874]=true, [4875]=true, [4877]=true }
-            if slot == 10 and ENG_IDS[enchId] then slotProf = "Eng"; d.hasEng = true; d.profs["Eng"] = true
-            elseif slot == 15 and TAILOR_IDS[enchId] then slotProf = "Tailor"; d.profs["Tailor"] = true
-            elseif slot == 3 and INSC_IDS[enchId] then slotProf = "Insc"; d.profs["Insc"] = true
-            elseif slot == 9 and LW_IDS[enchId] then slotProf = "LW"; d.profs["LW"] = true
-            elseif (slot == 11 or slot == 12) and enchId > 0 then slotProf = "Ench"; d.profs["Ench"] = true end
+            if (slot == 10 and ENG_IDS[enchId]) or tipProf == "Eng" then slotProf = "Eng"; d.hasEng = true; d.profs["Eng"] = true
+            elseif (slot == 15 and TAILOR_IDS[enchId]) or tipProf == "Tailor" then slotProf = "Tailor"; d.profs["Tailor"] = true
+            elseif (slot == 3 and INSC_IDS[enchId]) or tipProf == "Insc" then slotProf = "Insc"; d.profs["Insc"] = true
+            elseif (slot == 9 and LW_IDS[enchId]) or tipProf == "LW" then slotProf = "LW"; d.profs["LW"] = true
+            elseif ((slot == 11 or slot == 12) and enchId > 0) or tipProf == "Ench" then slotProf = "Ench"; d.profs["Ench"] = true end
             if (slot == 9 or slot == 10) and totSoc > 0 then
                 local baseSt = GetItemStats and GetItemStats("item:" .. id)
                 local baseSoc = 0
@@ -384,8 +400,17 @@ function TG:ScanUnit(unit, showUI)
                     end
                 end
             end
-            local missE = IsEnchantable(slot, loc) and enchId == 0
-            if missE then d.missEnch = d.missEnch + 1 end
+            local canE = IsEnchantable(slot, loc)
+            local missE = canE and enchId == 0 and not hasTipEnch
+            if canE then
+                d.enchMax = d.enchMax + 1
+                if missE then
+                    d.missEnch = d.missEnch + 1
+                    table.insert(d.missEnchSlots, GetSlotLabel(slot))
+                else
+                    d.enchCur = d.enchCur + 1
+                end
+            end
             if isPvp then d.pvp = d.pvp + 1 end
 
             table.insert(d.items, {
