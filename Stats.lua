@@ -118,164 +118,85 @@ function TG:GetSelfStats()
     }
 end
 
-local PATS = {
-    {"%+(%d+)%s+Strength","STR"},{"%+(%d+)%s+Agility","AGI"},{"%+(%d+)%s+Stamina","STA"},
-    {"%+(%d+)%s+Intellect","INT"},{"%+(%d+)%s+Spirit","SPI"},{"%+(%d+)%s+Spell Power","SP"},
-    {"%+(%d+)%s+Attack Power","AP"},{"%+(%d+)%s+Critical Strike","CRIT"},{"%+(%d+)%s+Crit","CRIT"},
-    {"%+(%d+)%s+Haste","HASTE"},{"%+(%d+)%s+Mastery","MAST"},{"%+(%d+)%s+Hit","HIT"},
-    {"%+(%d+)%s+Expertise","EXP"},{"%+(%d+)%s+Dodge","DODGE"},{"%+(%d+)%s+Parry","PARRY"},
-    {"%+(%d+)%s+PvP Power","PVP"},{"%+(%d+)%s+PvP Resilience","RESIL"}
+local STAT_PATS = {
+    { "^%+([%d%s%,%.]+)%s+Strength", "STR" },
+    { "^%+([%d%s%,%.]+)%s+Agility", "AGI" },
+    { "^%+([%d%s%,%.]+)%s+Stamina", "STA" },
+    { "^%+([%d%s%,%.]+)%s+Intellect", "INT" },
+    { "^%+([%d%s%,%.]+)%s+Spirit", "SPI" },
+    { "^%+([%d%s%,%.]+)%s+Critical Strike", "CRIT" },
+    { "^%+([%d%s%,%.]+)%s+Crit", "CRIT" },
+    { "^%+([%d%s%,%.]+)%s+Haste", "HASTE" },
+    { "^%+([%d%s%,%.]+)%s+Mastery", "MAST" },
+    { "^%+([%d%s%,%.]+)%s+Hit", "HIT" },
+    { "^%+([%d%s%,%.]+)%s+Expertise", "EXP" },
+    { "^%+([%d%s%,%.]+)%s+Dodge", "DODGE" },
+    { "^%+([%d%s%,%.]+)%s+Parry", "PARRY" },
+    { "^%+([%d%s%,%.]+)%s+PvP Power", "PVP" },
+    { "^%+([%d%s%,%.]+)%s+PvP Resilience", "RESIL" },
 }
-local function AddExtras(s, lines)
-    if not lines then return end
-    for _, l in ipairs(lines) do
-        if not l:find("^Equip:") and not l:find("^Use:") and not l:find("^Set:") and not l:find("^%(") then
-            for part in l:gmatch("[^,]+") do
-                local a = part:match("%+(%d+)%s+All Stats")
-                if a then local v = tonumber(a) or 0; s.STR=s.STR+v; s.AGI=s.AGI+v; s.STA=s.STA+v; s.INT=s.INT+v; s.SPI=s.SPI+v
-                else for _, p in ipairs(PATS) do local v = part:match(p[1]); if v then s[p[2]] = s[p[2]] + (tonumber(v) or 0) end end end
-            end
-        end
-    end
+
+local function ParseNum(str)
+    if not str then return 0 end
+    return tonumber((str:gsub("[^%d]", ""))) or 0
 end
 
-function TG:EstimateTargetStats(unit, class, specID, lines, armorOk)
-    local cat = GetRoleCategory(class, specID, 0, unit)
-    local _, race = UnitRace(unit)
-    local s = { STA=150, INT=160, AGI=160, STR=160, SPI=160, SP=0, AP=0, CRIT=0, HASTE=0, MAST=0, HIT=0, EXP=0, DODGE=0, PARRY=0, ARMOR=0, PVP=0, RESIL=0 }
-
-    local st = {}
-    for _, slot in ipairs({1, 2, 3, 15, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 16, 17}) do
-        local link = GetInventoryItemLink(unit, slot)
-        if link and GetItemStats then
-            wipe(st)
-            GetItemStats(link, st)
-            s.STA   = s.STA   + (st["ITEM_MOD_STAMINA_SHORT"] or 0)
-            s.INT   = s.INT   + (st["ITEM_MOD_INTELLECT_SHORT"] or 0)
-            s.AGI   = s.AGI   + (st["ITEM_MOD_AGILITY_SHORT"] or 0)
-            s.STR   = s.STR   + (st["ITEM_MOD_STRENGTH_SHORT"] or 0)
-            s.SPI   = s.SPI   + (st["ITEM_MOD_SPIRIT_SHORT"] or 0)
-            s.SP    = s.SP    + (st["ITEM_MOD_SPELL_POWER_SHORT"] or 0)
-            s.AP    = s.AP    + (st["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
-            s.CRIT  = s.CRIT  + (st["ITEM_MOD_CRIT_RATING_SHORT"] or 0)
-            s.HASTE = s.HASTE + (st["ITEM_MOD_HASTE_RATING_SHORT"] or 0)
-            s.MAST  = s.MAST  + (st["ITEM_MOD_MASTERY_RATING_SHORT"] or 0)
-            s.HIT   = s.HIT   + (st["ITEM_MOD_HIT_RATING_SHORT"] or 0)
-            s.EXP   = s.EXP   + (st["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0)
-            s.DODGE = s.DODGE + (st["ITEM_MOD_DODGE_RATING_SHORT"] or 0)
-            s.PARRY = s.PARRY + (st["ITEM_MOD_PARRY_RATING_SHORT"] or 0)
-            s.PVP   = s.PVP   + (st["ITEM_MOD_PVP_POWER_SHORT"] or 0)
-            s.RESIL = s.RESIL + (st["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0)
-            s.ARMOR = s.ARMOR + (st["RESISTANCE0_NAME"] or 0)
-            if GetItemGem then
-                for g = 1, 3 do
-                    local _, gl = GetItemGem(link, g)
-                    local gs = gl and GetItemStats(gl)
-                    if gs then
-                        for k, sk in pairs({ITEM_MOD_STAMINA_SHORT="STA",ITEM_MOD_INTELLECT_SHORT="INT",ITEM_MOD_AGILITY_SHORT="AGI",ITEM_MOD_STRENGTH_SHORT="STR",ITEM_MOD_SPIRIT_SHORT="SPI",ITEM_MOD_CRIT_RATING_SHORT="CRIT",ITEM_MOD_HASTE_RATING_SHORT="HASTE",ITEM_MOD_MASTERY_RATING_SHORT="MAST",ITEM_MOD_HIT_RATING_SHORT="HIT",ITEM_MOD_EXPERTISE_RATING_SHORT="EXP",ITEM_MOD_DODGE_RATING_SHORT="DODGE",ITEM_MOD_PARRY_RATING_SHORT="PARRY",ITEM_MOD_PVP_POWER_SHORT="PVP",ITEM_MOD_RESILIENCE_RATING_SHORT="RESIL"}) do
-                            s[sk] = s[sk] + (gs[k] or 0)
+local function ParseTooltipLines(s, lines)
+    if not lines then return end
+    for _, raw in ipairs(lines) do
+        local clean = raw:gsub("^Enchanted:%s*", ""):gsub("^Socket Bonus:%s*", ""):gsub("%s*%b()", "")
+        if not clean:find("^Equip:") and not clean:find("^Use:") and not clean:find("^Set:") and not clean:find("^Chance on hit:") then
+            local arm = clean:match("^([%d%s%,%.]+)%s+Armor")
+            if arm then
+                s.ARMOR = s.ARMOR + ParseNum(arm)
+            else
+                local norm = clean:gsub(",%s*%+", "|+"):gsub("%s+and%s+%+", "|+")
+                for part in norm:gmatch("[^|]+") do
+                    part = part:match("^%s*(.-)%s*$")
+                    if not part:match("^%+[%d%s%,%.]+%%") then
+                        local allVal = part:match("^%+([%d%s%,%.]+)%s+All Stats")
+                        if allVal then
+                            local v = ParseNum(allVal)
+                            s.STR = s.STR + v; s.AGI = s.AGI + v; s.STA = s.STA + v; s.INT = s.INT + v; s.SPI = s.SPI + v
+                        else
+                            for _, p in ipairs(STAT_PATS) do
+                                local valStr = part:match(p[1])
+                                if valStr then
+                                    s[p[2]] = s[p[2]] + ParseNum(valStr)
+                                    break
+                                end
+                            end
                         end
                     end
                 end
             end
         end
     end
-    AddExtras(s, lines)
+end
 
-    local statMult, staMult, critBonus, mastBonus, armorMult = 1.0, 1.0, 0.0, 0, 1.0
-    local apMult, spMult, meleeHasteMult, spellHasteMult = 1.0, 1.0, 1.0, 1.0
+function TG:EstimateTargetStats(unit, class, specID, lines)
+    local cat = GetRoleCategory(class, specID, 0, unit)
+    local _, race = UnitRace(unit)
+    local s = { STA=0, INT=0, AGI=0, STR=0, SPI=0, CRIT=0, HASTE=0, MAST=0, HIT=0, EXP=0, DODGE=0, PARRY=0, ARMOR=0, PVP=0, RESIL=0 }
+    ParseTooltipLines(s, lines)
 
-    for i = 1, 40 do
-        local name, _, _, _, _, _, _, _, _, _, spellId = UnitBuff(unit, i)
-        if not name then break end
-        if spellId == 20217 or spellId == 1126 or spellId == 115921 then statMult = 1.05
-        elseif spellId == 21562 or spellId == 469 or spellId == 109773 then staMult = 1.10
-        elseif spellId == 1459 or spellId == 61316 or spellId == 17007 or spellId == 116781 or spellId == 24604 or spellId == 90309 then critBonus = 5.0
-        elseif spellId == 19740 or spellId == 116956 then mastBonus = 3000
-        elseif spellId == 6673 or spellId == 57330 or spellId == 19506 then apMult = 1.10
-        elseif spellId == 1459 or spellId == 61316 or spellId == 77747 or spellId == 109773 then spMult = 1.10
-        elseif spellId == 30809 or spellId == 55610 or spellId == 113742 then meleeHasteMult = 1.10
-        elseif spellId == 24907 or spellId == 49868 or spellId == 15473 or spellId == 51470 then spellHasteMult = 1.05
-        elseif spellId == 5487 then staMult = staMult * 1.40; armorMult = 2.20
-        elseif spellId == 48263 then staMult = staMult * 1.25; armorMult = 1.55
-        -- Timeless Isle & Crystal of Insanity
-        elseif spellId == 127230 then s.STR=s.STR+500; s.AGI=s.AGI+500; s.STA=s.STA+500; s.INT=s.INT+500; s.SPI=s.SPI+500
-        elseif spellId == 147226 then statMult = statMult * 1.05
-        -- MoP Flasks (+1000 / +1500 Sta) & Alchemist Flask (+320 nejvyssi stat)
-        elseif spellId == 105696 then s.STR = s.STR + 1000
-        elseif spellId == 105689 then s.AGI = s.AGI + 1000
-        elseif spellId == 105691 then s.INT = s.INT + 1000
-        elseif spellId == 105693 then s.SPI = s.SPI + 1000
-        elseif spellId == 105694 then s.STA = s.STA + 1500
-        elseif spellId == 105617 then
-            if s.STR >= s.AGI and s.STR >= s.INT then s.STR = s.STR + 320
-            elseif s.INT >= s.AGI then s.INT = s.INT + 320
-            else s.AGI = s.AGI + 320 end
-        -- MoP Food 300 Stat / 450 Sta (vcetne Noodle Cartu)
-        elseif spellId == 104272 or spellId == 146805 then s.STR = s.STR + 300
-        elseif spellId == 104275 or spellId == 146806 then s.AGI = s.AGI + 300
-        elseif spellId == 104277 or spellId == 146804 then s.INT = s.INT + 300
-        elseif spellId == 104280 or spellId == 146807 then s.SPI = s.SPI + 300
-        elseif spellId == 104283 or spellId == 146808 then s.STA = s.STA + 450
-        -- MoP Food 275 Stat / 415 Sta
-        elseif spellId == 104271 or spellId == 124219 or spellId == 125113 then s.STR = s.STR + 275
-        elseif spellId == 104274 or spellId == 124217 or spellId == 125115 then s.AGI = s.AGI + 275
-        elseif spellId == 104276 or spellId == 124215 or spellId == 125114 then s.INT = s.INT + 275
-        elseif spellId == 104279 or spellId == 124221 or spellId == 125104 then s.SPI = s.SPI + 275
-        elseif spellId == 104282 or spellId == 124213 or spellId == 125102 then s.STA = s.STA + 415
-        -- MoP Food 250 Stat / 375 Sta
-        elseif spellId == 104267 or spellId == 124218 or spellId == 125108 then s.STR = s.STR + 250
-        elseif spellId == 104273 or spellId == 124216 or spellId == 125106 then s.AGI = s.AGI + 250
-        elseif spellId == 104264 or spellId == 124214 or spellId == 125109 then s.INT = s.INT + 250
-        elseif spellId == 104278 or spellId == 124220 or spellId == 125110 then s.SPI = s.SPI + 250
-        elseif spellId == 104281 or spellId == 124212 or spellId == 125112 then s.STA = s.STA + 375
-        end
-    end
-
-    local hitBonus = 0
-    if race == "Worgen" then critBonus = critBonus + 1.0 end
-    if race == "Draenei" then hitBonus = hitBonus + 1.0 end
-    if race == "Human" then s.SPI = math.floor(s.SPI * 1.03) end
-
-    local specPrimMult = (armorOk ~= false and (UnitLevel(unit) or 0) >= 50) and 1.05 or 1.0
-
-    s.STR = math.floor(s.STR * statMult * specPrimMult)
-    s.AGI = math.floor(s.AGI * statMult * specPrimMult)
-    s.INT = math.floor(s.INT * statMult * specPrimMult)
-    s.STA = math.floor(s.STA * statMult * staMult)
-    s.ARMOR = math.floor(s.ARMOR * armorMult)
-    s.MAST = s.MAST + mastBonus
-
+    local hitBonus = (race == "Draenei") and 1.0 or 0
     local isSpell = (cat == "CASTER" or cat == "HEALER")
-    local isStr = (class == "WARRIOR" or class == "PALADIN" or class == "DEATHKNIGHT")
-
-    local primCrit = isSpell and (s.INT / 2533) or (not isStr and (s.AGI / 2533) or 0)
-    local critPct = 5.0 + (s.CRIT / 600) + primCrit + critBonus
-    local baseHaste = s.HASTE / 425
-    local gobMult = (race == "Goblin") and 1.01 or 1.0
-    local hastePct = isSpell and (((1 + baseHaste / 100) * spellHasteMult * gobMult - 1) * 100) or (((1 + baseHaste / 100) * meleeHasteMult * gobMult - 1) * 100)
-    local mastPct = ((UnitLevel(unit) or 0) >= 80) and ((8.0 + (s.MAST / 600)) * GetMasteryMult(specID)) or 0
     local spiToHit = (specID == 102 or specID == 258 or specID == 262) and s.SPI or 0
     local hitPct = (((isSpell and (s.HIT + spiToHit) or s.HIT)) / 340) + hitBonus
     local expPct = s.EXP / 340
-    local pvpPct = s.PVP / 400
-    local resilPct = s.RESIL / 400
-    local estMp5 = math.floor(1126 + (s.SPI * 0.56))
-
-    local rawAP = s.AP + (isStr and s.STR * 2 or s.AGI * 2)
-    local rawSP = s.SP + s.INT
+    local gobMult = (race == "Goblin") and 1.01 or 1.0
+    local hastePct = ((1 + (s.HASTE / 425) / 100) * gobMult - 1) * 100
 
     return {
-        cat = cat, specID = specID, hp = UnitHealthMax(unit) or 0, armor = s.ARMOR,
-        str = s.STR, agi = s.AGI, sta = s.STA, int = s.INT, spi = s.SPI, mp5 = estMp5,
-        ap = math.floor(rawAP * apMult), sp = math.floor(rawSP * spMult),
-        crit = string.format("%.2f%%", critPct), haste = string.format("%.2f%%", hastePct),
-        mast = string.format("%.2f%%", mastPct), hit = string.format("%.2f%%", hitPct),
+        isGearOnly = true,
+        rawSpi = s.SPI, rawCrit = s.CRIT, rawHaste = s.HASTE, rawMast = s.MAST,
+        rawHit = s.HIT, rawExp = s.EXP, rawDodge = s.DODGE, rawParry = s.PARRY,
+        rawArmor = s.ARMOR, rawPvp = s.PVP, rawResil = s.RESIL,
+        cat = cat, specID = specID, hp = UnitHealthMax(unit) or 0,
+        haste = string.format("%.2f%%", hastePct),
+        hit = string.format("%.2f%%", hitPct),
         exp = string.format("%.2f%%", expPct),
-        dodge = string.format("%.2f%%", 3.0 + (s.DODGE / 600) + (s.AGI / 2533)),
-        parry = string.format("%.2f%%", 3.0 + (s.PARRY / 600) + (isStr and (s.STR / 951) or 0)),
-        pvp = string.format("%.2f%%", pvpPct),
-        resil = string.format("%.2f%%", resilPct),
     }
 end
 

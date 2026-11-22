@@ -181,7 +181,7 @@ function TG:InitUI()
 
     local ver = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     ver:SetPoint("BOTTOMRIGHT", -14, 16)
-    ver:SetText("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3")
+    ver:SetText("|cffffd100Twin|r|cff00ff00Gear|r v2.2.4")
     f:SetScale(TwinGearDB and TwinGearDB.scale or 1.0)
 
     local p1 = CreateFrame("Frame", nil, f)
@@ -411,6 +411,48 @@ local function BuildStatRows(d)
     local s = d.stats or {}
     local cat = s.cat or "MELEE"
     local lvl = d.level or 90
+
+    if not d.isSynced then
+        local mhLvl, ohLvl, is2H = 0, 0, false
+        local trkCount = 0
+        for _, it in ipairs(d.items or {}) do
+            if not it.empty then
+                if it.slotName == "Main Hand" then
+                    mhLvl = it.ilvl or 0
+                    local loc = it.link and select(9, GetItemInfo(it.link))
+                    is2H = (loc == "INVTYPE_2HWEAPON" or loc == "INVTYPE_RANGED" or loc == "INVTYPE_RANGEDRIGHT")
+                elseif it.slotName == "Off Hand" then
+                    ohLvl = it.ilvl or 0
+                elseif it.slotName == "Trinket 1" or it.slotName == "Trinket 2" then
+                    trkCount = trkCount + 1
+                end
+            end
+        end
+        local wepStr = (mhLvl > 0) and (is2H and ("2H " .. mhLvl) or (mhLvl .. " / " .. (ohLvl > 0 and ohLvl or "None"))) or "|cffff3333None|r"
+        local trkStr = (trkCount == 2) and "|cff00ff002 / 2 Equipped|r" or ("|cffff3333" .. trkCount .. " / 2 Equipped|r")
+        local gTot, gFil = d.socTotal or 0, d.socFilled or 0
+        local gemStr = (gFil == gTot) and ("|cff00ff00" .. gFil .. " / " .. gTot .. "|r") or ("|cffff3333" .. gFil .. " / " .. gTot .. "|r")
+        local eTot, eCur = d.enchMax or 0, d.enchCur or 0
+        local enchStr = (eCur == eTot) and ("|cff00ff00" .. eCur .. " / " .. eTot .. "|r") or ("|cffff3333" .. eCur .. " / " .. eTot .. "|r")
+        local upgStr = (d.upgCur or 0) .. " / " .. (d.upgMax or 0)
+        local pvpCnt = d.pvp or 0
+        local pvpStr = (pvpCnt == 0) and "|cff00ff000 PvP items|r" or ("|cffff8800" .. pvpCnt .. " PvP items|r")
+        local isReady = (gFil == gTot and eCur == eTot and trkCount == 2 and mhLvl > 0 and (d.wrongArmor or 0) == 0)
+        local rdyStr = isReady and "|cff00ff00READY|r" or "|cffff3333INCOMPLETE|r"
+
+        return {
+            { "Health:", s.hp or 0 },
+            { "Equipped iLvl:", d.ilvl or 0 },
+            { "Weapons (MH/OH):", wepStr, true },
+            { "Trinkets:", trkStr, true },
+            { "Gemmed Sockets:", gemStr, true },
+            { "Enchanted Slots:", enchStr, true },
+            { "Valor Upgrades:", upgStr, true },
+            { "PvP Gear:", pvpStr, true },
+            { "PvE Readiness:", rdyStr, true },
+        }
+    end
+
     local isStr = (d.class == "WARRIOR" or d.class == "PALADIN" or d.class == "DEATHKNIGHT")
     local isInt = (cat == "CASTER" or cat == "HEALER")
     local primLbl = isInt and "Intellect:" or (isStr and "Strength:" or "Agility:")
@@ -622,7 +664,7 @@ function TG:UpdateUI(d)
 
     local catLabels = { TANK = "Tank Stats", HEALER = "Healer Stats", CASTER = "Spell Stats", RANGED = "Ranged Stats", MELEE = "Melee Stats" }
     local catTitle = catLabels[(d.stats and d.stats.cat) or "MELEE"] or "Character Stats"
-    f.StatsHeader:SetText("|cffffd100" .. catTitle .. "|r " .. (d.isSynced and "|cff00ccff(Exact)|r" or "|cff888888(Est.)|r"))
+    f.StatsHeader:SetText("|cffffd100" .. catTitle .. "|r " .. (d.isSynced and "|cff00ccff(Exact)|r" or "|cff00ccff(Gear Audit)|r"))
 
     local stData = BuildStatRows(d)
     for i, row in ipairs(f.StatRows) do
@@ -634,6 +676,31 @@ function TG:UpdateUI(d)
             row.L:SetText("")
             row.R:SetText("")
         end
+    end
+
+    if not f.SyncNote then
+        local sn = CreateFrame("Button", nil, f.Page1)
+        sn:SetSize(205, 34)
+        sn:SetPoint("TOPLEFT", 415, -268)
+        sn.Txt = sn:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+        sn.Txt:SetAllPoints()
+        sn.Txt:SetJustifyH("LEFT")
+        sn.Txt:SetJustifyV("TOP")
+        sn:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+            GameTooltip:SetFrameStrata("TOOLTIP")
+            GameTooltip:AddLine("|cffffd100TwinGear P2P Sync|r")
+            GameTooltip:AddLine("• |cff00ccffWith TwinGear:|r Shares 100% exact character stats, raid progression, and Challenge Mode medals.", 0.9, 0.9, 0.9, true)
+            GameTooltip:AddLine("• |cff888888Without TwinGear:|r Shows verified gear audit & PvE readiness only (WoW API hides remote player talents/stats).", 0.8, 0.8, 0.8, true)
+            GameTooltip:Show()
+        end)
+        sn:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        f.SyncNote = sn
+    end
+    if d.isSynced then
+        f.SyncNote.Txt:SetText("|cff00ccff[Sync Active]|r 100% exact stats & progression.")
+    else
+        f.SyncNote.Txt:SetText("|cff888888Exact stats & raid kills require TwinGear.\nHover here for P2P Sync details.|r")
     end
 
     for i, r in ipairs(f.GearRows) do
@@ -875,7 +942,7 @@ function TG:InitMinimap()
 
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:AddLine("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3")
+        GameTooltip:AddLine("|cffffd100Twin|r|cff00ff00Gear|r v2.2.4")
         GameTooltip:AddLine("|cffccccccLeft-Click:|r Toggle Window", 1, 1, 1)
         GameTooltip:AddLine("|cffccccccRight-Click:|r Scan Group / Raid", 1, 1, 1)
         GameTooltip:AddLine("|cffccccccDrag:|r Move Icon", 1, 1, 1)

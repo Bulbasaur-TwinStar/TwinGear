@@ -1,4 +1,4 @@
-BINDING_HEADER_TWINGEAR = "TwinGear 2.2.3"
+BINDING_HEADER_TWINGEAR = "TwinGear 2.2.4"
 BINDING_NAME_TWINGEAR_TOGGLE = "Toggle TwinGear Window"
 
 local addonName, TG = ...
@@ -294,11 +294,17 @@ function TG:ScanUnit(unit, showUI)
             end
 
             scanTip:ClearLines()
+            for cl = 1, 30 do
+                local lfs = _G["TwinGearScanTipTextLeft" .. cl]
+                if lfs then lfs:SetText("") end
+                local rfs = _G["TwinGearScanTipTextRight" .. cl]
+                if rfs then rfs:SetText("") end
+            end
             for t = 1, 4 do
                 local tex = _G["TwinGearScanTipTexture" .. t]
                 if tex then tex:SetTexture(nil) end
             end
-            scanTip:SetInventoryItem(unit, slot)
+            scanTip:SetHyperlink(link)
 
             for t = 1, 4 do
                 local tex = _G["TwinGearScanTipTexture" .. t]
@@ -310,7 +316,14 @@ function TG:ScanUnit(unit, showUI)
             end
 
             for line = 2, scanTip:NumLines() do
-                local fs = _G["TwinGearScanTipTextLeft" .. line]; local txt = (fs and fs:GetText()) or ""; if fs then local r,g,b = fs:GetTextColor(); if g>0.9 and r<0.2 and b<0.2 then table.insert(rawLines, txt) end end
+                local fs = _G["TwinGearScanTipTextLeft" .. line]
+                local txt = (fs and fs:GetText()) or ""; txt = txt:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+                if txt ~= "" and fs then
+                    local r, g, b = fs:GetTextColor()
+                    if not (r < 0.65 and g < 0.65 and b < 0.65) then
+                        table.insert(rawLines, txt)
+                    end
+                end
                 local ilvlPat = ITEM_LEVEL and string.gsub(ITEM_LEVEL, "%%d", "(%%d+)") or "Item Level (%d+)"
                 local m = string.match(txt, ilvlPat) or string.match(txt, "Item Level (%d+)")
                 if m then realLvl = tonumber(m) end
@@ -449,7 +462,7 @@ function TG:ScanUnit(unit, showUI)
     end
     if d.ilvl > 0 or isSelf then
         TG.Cache[name] = d
-        if d.ilvl > 0 then TG:AddHistory(name) end
+        if d.ilvl > 0 then TG:AddHistory(name); if isSelf and TG.SaveCurrentAlt then TG:SaveCurrentAlt(d) end end
     end
     if showUI and TG.UpdateUI then TG:UpdateUI(d) end
 end
@@ -518,7 +531,7 @@ ev:SetScript("OnEvent", function(self, event, arg1)
         if TG.InitSync then TG:InitSync() end
 
     elseif event == "PLAYER_ENTERING_WORLD" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3 loaded. Type |cffffd100/tg|r to open or |cffffd100/tg help|r for commands.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.4 loaded. Type |cffffd100/tg|r to open or |cffffd100/tg help|r for commands.")
         TG:ScanUnit("player", false)
         if TG.SaveCurrentAlt and TG.Cache[GetUnitName("player", true)] then
             TG:SaveCurrentAlt(TG.Cache[GetUnitName("player", true)])
@@ -538,7 +551,8 @@ ev:SetScript("OnEvent", function(self, event, arg1)
         end
 
     elseif event == "UNIT_AURA" then
-        if TG.Frame and TG.Frame:IsShown() and TG.CurrentData then
+        if TG.Frame and TG.Frame:IsShown() and TG.CurrentData and (GetTime() - (TG.LastAuraScan or 0)) > 0.5 then
+            TG.LastAuraScan = GetTime()
             if arg1 == "player" and TG.CurrentData.isSelf then
                 TG:ScanUnit("player", true)
             elseif arg1 == "target" and not TG.CurrentData.isSelf and UnitExists("target") then
@@ -580,7 +594,8 @@ ev:SetScript("OnEvent", function(self, event, arg1)
             or (UnitExists("mouseover") and UnitGUID("mouseover") == guid and "mouseover")
         if not u and IsInGroup() then
             local prefix = IsInRaid() and "raid" or "party"
-            for i = 1, GetNumGroupMembers() do
+            local cnt = IsInRaid() and GetNumGroupMembers() or GetNumSubgroupMembers()
+            for i = 1, cnt do
                 local gu = prefix .. i
                 if UnitExists(gu) and UnitGUID(gu) == guid then u = gu; break end
             end
@@ -598,7 +613,6 @@ ev:SetScript("OnEvent", function(self, event, arg1)
                     if TG.Frame and TG.Frame:IsShown() and UnitExists("target") and UnitGUID("target") == guid then
                         TG:ScanUnit("target", true)
                     end
-                    ClearInspectPlayer()
                 end)
             elseif u == "mouseover" then
                 TG:After(0.35, function()
@@ -609,13 +623,10 @@ ev:SetScript("OnEvent", function(self, event, arg1)
                             if ttUnit and UnitGUID(ttUnit) == guid then GameTooltip:SetUnit(ttUnit) end
                         end
                     end
-                    ClearInspectPlayer()
                 end)
             else
-                ClearInspectPlayer()
-            end
+                end
         else
-            ClearInspectPlayer()
         end
         if TG.InspectQueue and #TG.InspectQueue > 0 then
             local nxt = table.remove(TG.InspectQueue, 1)
@@ -647,7 +658,7 @@ SlashCmdList["TWINGEAR"] = function(msg)
     if not TG.Frame then return end
     local cmd = string.lower(strtrim(msg or ""))
     if cmd == "help" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3 commands:")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.4 commands:")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg|r - Toggle main window")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg scan|r - Open Group Scan & scan party/raid")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg tooltip|r - Toggle iLvl in player tooltip")
