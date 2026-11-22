@@ -319,8 +319,10 @@ function TG:GetBreakpointSummary(stats, unit)
             if not bName then break end
             if sId == 24907 or sId == 49868 or sId == 15473 or sId == 51470 then hasBuff = true break end
         end
-        if hasBuff then
-            hPct = (((1 + hPct / 100) / 1.05) - 1) * 100
+        local _, rCheck = UnitRace(unit)
+        local div = (hasBuff and 1.05 or 1.0) * (rCheck == "Goblin" and 1.01 or 1.0)
+        if div > 1.0 then
+            hPct = (((1 + hPct / 100) / div) - 1) * 100
         end
         hr = math.max(0, math.floor(hPct * 425))
     end

@@ -36,12 +36,12 @@ local function IsEnchantable(slot, loc)
 end
 
 local function GetExpectedArmor(class)
-    local id = nil
-    if class == "MAGE" or class == "PRIEST" or class == "WARLOCK" then id = 2962
-    elseif class == "ROGUE" or class == "DRUID" or class == "MONK" then id = 2318
-    elseif class == "HUNTER" or class == "SHAMAN" then id = 2972
-    elseif class == "WARRIOR" or class == "PALADIN" or class == "DEATHKNIGHT" then id = 8094 end
-    return id and select(7, GetItemInfo(id)) or nil
+    local _, cloth, leather, mail, plate = GetAuctionItemSubClasses(2)
+    if class == "MAGE" or class == "PRIEST" or class == "WARLOCK" then return cloth
+    elseif class == "ROGUE" or class == "DRUID" or class == "MONK" then return leather
+    elseif class == "HUNTER" or class == "SHAMAN" then return mail
+    elseif class == "WARRIOR" or class == "PALADIN" or class == "DEATHKNIGHT" then return plate end
+    return nil
 end
 
 local ARMOR_SLOTS = { [1]=true, [3]=true, [5]=true, [6]=true, [7]=true, [8]=true, [9]=true, [10]=true }
@@ -316,14 +316,14 @@ function TG:ScanUnit(unit, showUI)
                 if m then realLvl = tonumber(m) end
                 local upgPat = ITEM_UPGRADE_TOOLTIP_FORMAT and string.gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)") or "Upgrade Level:%s*(%d+)%s*/%s*(%d+)"
                 local c, mx = string.match(txt, upgPat)
-                if not c then c, mx = string.match(txt, "(%d+)%s*/%s*(%d+)") end
+                if not c and string.find(txt, "Upgrade", 1, true) then c, mx = string.match(txt, "(%d+)%s*/%s*(%d+)") end
                 if c and mx and tonumber(mx) and tonumber(mx) <= 6 then uCur, uMax = tonumber(c), tonumber(mx) end
                 if not isReforged and string.find(txt, "(Reforged from", 1, true) then isReforged = true end
-                local pvpSt = GetItemStats and GetItemStats(link)
-                if pvpSt and ((pvpSt["ITEM_MOD_PVP_POWER_SHORT"] or 0) > 0 or (pvpSt["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0) > 0) then isPvp = true end
                 -- Profession detection handled via Enchant ID below
             end
             if isReforged then d.reforged = d.reforged + 1 end
+            local pvpSt = GetItemStats and GetItemStats(link)
+            if pvpSt and ((pvpSt["ITEM_MOD_PVP_POWER_SHORT"] or 0) > 0 or (pvpSt["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0) > 0 or (pvpSt["ITEM_MOD_PVP_RESILIENCE_SHORT"] or 0) > 0) then isPvp = true end
 
             if realLvl > 0 then
                 totalILvl = totalILvl + realLvl
@@ -406,7 +406,7 @@ function TG:ScanUnit(unit, showUI)
         d.ilvl = math.floor((totalILvl / count) + 0.5)
     end
 
-    local armorOk = (armorPieces == 8 and d.wrongArmor == 0)
+    local armorOk = (armorPieces > 0 and d.wrongArmor == 0)
     local prev = TG.Cache[name]
     if prev and prev.isSynced and not isSelf then
         d.stats, d.isSynced, d.syncedRaids, d.syncedCM, d.syncedCMList, d.syncedProfs = prev.stats, true, prev.syncedRaids, prev.syncedCM, prev.syncedCMList, prev.syncedProfs
