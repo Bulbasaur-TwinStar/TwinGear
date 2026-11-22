@@ -181,7 +181,7 @@ function TG:InitUI()
 
     local ver = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     ver:SetPoint("BOTTOMRIGHT", -14, 16)
-    ver:SetText("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2")
+    ver:SetText("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3")
     f:SetScale(TwinGearDB and TwinGearDB.scale or 1.0)
 
     local p1 = CreateFrame("Frame", nil, f)
@@ -356,7 +356,22 @@ function TG:InitUI()
         r.ILvl = r:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); r.ILvl:SetPoint("TOPRIGHT", -2, -1)
         r.Sub = r:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall"); r.Sub:SetPoint("BOTTOMLEFT", 2, 1)
         r.Audit = r:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); r.Audit:SetPoint("BOTTOMRIGHT", -2, 1)
-        r:SetScript("OnClick", function(self) if self.playerName and TG.Cache[self.playerName] then TG:UpdateUI(TG.Cache[self.playerName]); TG:SwitchTab(2) end end)
+        r:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        r:SetScript("OnClick", function(self, btn)
+            local c = self.playerName and TG.Cache[self.playerName]
+            if not c then return end
+            if btn == "RightButton" then
+                local fl = c.hasFlask and "Flask:OK" or "NoFlask"
+                local fd = c.hasFood and "Food:OK" or "NoFood"
+                local totG = (c.missGems or 0) + (c.missBuckle and 1 or 0)
+                local ge = (totG == 0 and (c.missEnch or 0) == 0 and (c.wrongArmor or 0) == 0) and "Gear:OK" or string.format("-%dG/-%dE", totG, c.missEnch or 0)
+                local msg = string.format("[TwinGear] %s - %d iLvl (%s %s) [%s, %s, %s]", ShortName(c.name), c.ilvl or 0, c.spec or "", c.class or "", fl, fd, ge)
+                local eb = ChatEdit_ChooseBoxForSend and ChatEdit_ChooseBoxForSend() or DEFAULT_CHAT_FRAME.editBox
+                if eb then ChatEdit_ActivateChat(eb); eb:SetText(msg) end
+            else
+                TG:UpdateUI(c); TG:SwitchTab(2)
+            end
+        end)
         table.insert(f.GroupRows, r)
     end
 end
@@ -601,7 +616,7 @@ function TG:UpdateUI(d)
     for i, r in ipairs(f.GearRows) do
         local it = d.items[i]
         if it and not it.empty then
-            r.link = it.link; r.Slot:SetText(it.slotName); r.Icon:SetTexture(it.icon); r.Name:SetText(it.link)
+            r.link = it.link; r.Slot:SetText(it.slotName); r.Icon:SetTexture(it.icon or "Interface\\Icons\\INV_Misc_QuestionMark"); r.Name:SetText(it.link)
             r.ILvl:SetText(it.ilvl .. (it.upg ~= "" and (" |cffffd100(" .. it.upg .. ")|r") or ""))
             local w = {}
             if it.isWrongArmor then table.insert(w, "|cffff3333Armor!|r") end
@@ -784,7 +799,7 @@ inspHook:SetScript("OnEvent", function(self, event, arg)
         b:SetSize(78, 20); b:SetPoint("TOPRIGHT", InspectFrame, "TOPRIGHT", -36, -4)
         b:SetText("|cffffd100Twin|r|cff00ff00Gear|r")
         b:SetScript("OnClick", function()
-            if InspectFrame then HideUIPanel(InspectFrame) end
+            if InspectFrame and not InCombatLockdown() then HideUIPanel(InspectFrame) end
             TG.Frame:Show()
             TG:SwitchTab(1)
             if UnitExists("target") and UnitIsPlayer("target") then
@@ -837,7 +852,7 @@ function TG:InitMinimap()
 
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:AddLine("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2")
+        GameTooltip:AddLine("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3")
         GameTooltip:AddLine("|cffccccccLeft-Click:|r Toggle Window", 1, 1, 1)
         GameTooltip:AddLine("|cffccccccRight-Click:|r Scan Group / Raid", 1, 1, 1)
         GameTooltip:AddLine("|cffccccccDrag:|r Move Icon", 1, 1, 1)
@@ -935,9 +950,14 @@ function TG:RefreshPage4()
         local iCol = (ilvl >= 550 and "|cffff8000") or (ilvl >= 510 and "|cffa335ee") or (ilvl >= 460 and "|cff0070dd") or "|cff1eff00"
         local wbs = 0; for _, w in ipairs(a.wb or {}) do if w.killed then wbs = wbs + 1 end end
         local pr = {}; for _, x in ipairs(a.profs or {}) do table.insert(pr, "|cffcccccc" .. string.sub(x.name, 1, 4) .. ".|r |cffffd100" .. x.skill .. "|r") end
+        local sealStr = ""
+        if a.seals ~= nil then
+            local sCol = a.seals > 0 and "|cffa335ee" or "|cffff4444"
+            sealStr = string.format(" |cff555555•|r Seals: %s%d|r", sCol, a.seals)
+        end
         local cdStr = (a.cds and #a.cds > 0) and (" |cff00ff00[" .. table.concat(a.cds, ", ") .. "]|r") or ""
-        table.insert(lines, string.format("• |cff%02x%02x%02x%s|r |cff999999(%s, Lvl %d)|r — iLvl: %s%.1f|r |cff555555•|r WB: %s%d/6|r |cff555555•|r |cff33aaff%s|r |cff555555•|r %s%s",
-            cc.r*255, cc.g*255, cc.b*255, a.name or "?", a.spec or "", a.level or 90, iCol, ilvl, (wbs >= 6) and "|cffff4444" or "|cff00ff00", wbs, a.raid or "SoO 0/14", #pr > 0 and table.concat(pr, ", ") or "|cff777777No Profs|r", cdStr))
+        table.insert(lines, string.format("• |cff%02x%02x%02x%s|r |cff999999(%s, Lvl %d)|r — iLvl: %s%.1f|r |cff555555•|r WB: %s%d/6|r%s |cff555555•|r |cff33aaff%s|r |cff555555•|r %s%s",
+            cc.r*255, cc.g*255, cc.b*255, a.name or "?", a.spec or "", a.level or 90, iCol, ilvl, (wbs >= 6) and "|cffff4444" or "|cff00ff00", wbs, sealStr, a.raid or "SoO 0/14", #pr > 0 and table.concat(pr, ", ") or "|cff777777No Profs|r", cdStr))
     end
     p4.Alts:SetText(table.concat(lines, "\n"))
     if p4.Alts:GetParent() then p4.Alts:GetParent():SetHeight(math.max(225, (p4.Alts:GetStringHeight() or 200) + 25)) end

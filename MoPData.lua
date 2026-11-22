@@ -250,7 +250,7 @@ function TG:SaveCurrentAlt(d)
         name = UnitName("player"), realm = GetRealmName(), classToken = classToken,
         spec = (specName ~= "" and (specName .. " ") or "") .. (className or ""), level = UnitLevel("player") or 90,
         ilvl = d.ilvl or 0, wb = TG:GetMyWorldBosses(), profs = pr, raid = soo,
-        cds = TG:GetReadyDailyCooldowns()
+        cds = TG:GetReadyDailyCooldowns(), seals = select(2, GetCurrencyInfo(776)) or 0
     }
 end
 
@@ -269,6 +269,6 @@ end
 SLASH_TGCLEARALTS1 = "/tgclearalts"
 SlashCmdList["TGCLEARALTS"] = function()
     if TwinGearDB then TwinGearDB.alts = {} end
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2: Account alts list cleared.")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3: Account alts list cleared.")
     if TG.RefreshPage4 then TG:RefreshPage4() end
 end

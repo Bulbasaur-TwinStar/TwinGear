@@ -198,6 +198,37 @@ function TG:EstimateTargetStats(unit, class, specID, lines, armorOk)
         elseif spellId == 24907 or spellId == 49868 or spellId == 15473 or spellId == 51470 then spellHasteMult = 1.05
         elseif spellId == 5487 then staMult = staMult * 1.40; armorMult = 2.20
         elseif spellId == 48263 then staMult = staMult * 1.25; armorMult = 1.55
+        -- Timeless Isle & Crystal of Insanity
+        elseif spellId == 127230 then s.STR=s.STR+500; s.AGI=s.AGI+500; s.STA=s.STA+500; s.INT=s.INT+500; s.SPI=s.SPI+500
+        elseif spellId == 147226 then statMult = statMult * 1.05
+        -- MoP Flasks (+1000 / +1500 Sta) & Alchemist Flask (+320 nejvyssi stat)
+        elseif spellId == 105696 then s.STR = s.STR + 1000
+        elseif spellId == 105689 then s.AGI = s.AGI + 1000
+        elseif spellId == 105691 then s.INT = s.INT + 1000
+        elseif spellId == 105693 then s.SPI = s.SPI + 1000
+        elseif spellId == 105694 then s.STA = s.STA + 1500
+        elseif spellId == 105617 then
+            if s.STR >= s.AGI and s.STR >= s.INT then s.STR = s.STR + 320
+            elseif s.INT >= s.AGI then s.INT = s.INT + 320
+            else s.AGI = s.AGI + 320 end
+        -- MoP Food 300 Stat / 450 Sta (vcetne Noodle Cartu)
+        elseif spellId == 104272 or spellId == 146805 then s.STR = s.STR + 300
+        elseif spellId == 104275 or spellId == 146806 then s.AGI = s.AGI + 300
+        elseif spellId == 104277 or spellId == 146804 then s.INT = s.INT + 300
+        elseif spellId == 104280 or spellId == 146807 then s.SPI = s.SPI + 300
+        elseif spellId == 104283 or spellId == 146808 then s.STA = s.STA + 450
+        -- MoP Food 275 Stat / 415 Sta
+        elseif spellId == 104271 or spellId == 124219 or spellId == 125113 then s.STR = s.STR + 275
+        elseif spellId == 104274 or spellId == 124217 or spellId == 125115 then s.AGI = s.AGI + 275
+        elseif spellId == 104276 or spellId == 124215 or spellId == 125114 then s.INT = s.INT + 275
+        elseif spellId == 104279 or spellId == 124221 or spellId == 125104 then s.SPI = s.SPI + 275
+        elseif spellId == 104282 or spellId == 124213 or spellId == 125102 then s.STA = s.STA + 415
+        -- MoP Food 250 Stat / 375 Sta
+        elseif spellId == 104267 or spellId == 124218 or spellId == 125108 then s.STR = s.STR + 250
+        elseif spellId == 104273 or spellId == 124216 or spellId == 125106 then s.AGI = s.AGI + 250
+        elseif spellId == 104264 or spellId == 124214 or spellId == 125109 then s.INT = s.INT + 250
+        elseif spellId == 104278 or spellId == 124220 or spellId == 125110 then s.SPI = s.SPI + 250
+        elseif spellId == 104281 or spellId == 124212 or spellId == 125112 then s.STA = s.STA + 375
         end
     end
 

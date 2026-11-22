@@ -2,7 +2,7 @@ local _, TG = ...
 
 TG.Locales = {
     enUS = {
-        TITLE = "TwinGear 2.2.2", SUBTITLE = "For TwinStar Helios & Persés",
+        TITLE = "TwinGear 2.2.3", SUBTITLE = "For TwinStar Helios & Persés",
         TAB_SUMMARY = "Summary", TAB_EQUIP = "Equipment", TAB_GROUP = "Group Scan", TAB_ALTS = "Alts & MoP",
         BTN_LINK = "Link", BTN_RESCAN = "Re-Scan", BTN_HISTORY = "History",
         BTN_SCAN_GRP = "Scan Group", BTN_REPORT = "Report to Chat",

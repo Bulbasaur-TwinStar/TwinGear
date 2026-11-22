@@ -1,4 +1,4 @@
-BINDING_HEADER_TWINGEAR = "TwinGear 2.2.2"
+BINDING_HEADER_TWINGEAR = "TwinGear 2.2.3"
 BINDING_NAME_TWINGEAR_TOGGLE = "Toggle TwinGear Window"
 
 local addonName, TG = ...
@@ -311,8 +311,8 @@ function TG:ScanUnit(unit, showUI)
 
             for line = 2, scanTip:NumLines() do
                 local fs = _G["TwinGearScanTipTextLeft" .. line]; local txt = (fs and fs:GetText()) or ""; if fs then local r,g,b = fs:GetTextColor(); if g>0.9 and r<0.2 and b<0.2 then table.insert(rawLines, txt) end end
-                local ilvlPat = ITEM_LEVEL and string.gsub(ITEM_LEVEL, "%%d", "(%%d+)") or "Item Level (%%d+)"
-                local m = string.match(txt, ilvlPat) or string.match(txt, "Item Level (%%d+)")
+                local ilvlPat = ITEM_LEVEL and string.gsub(ITEM_LEVEL, "%%d", "(%%d+)") or "Item Level (%d+)"
+                local m = string.match(txt, ilvlPat) or string.match(txt, "Item Level (%d+)")
                 if m then realLvl = tonumber(m) end
                 local upgPat = ITEM_UPGRADE_TOOLTIP_FORMAT and string.gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)") or "Upgrade Level:%s*(%d+)%s*/%s*(%d+)"
                 local c, mx = string.match(txt, upgPat)
@@ -328,7 +328,7 @@ function TG:ScanUnit(unit, showUI)
             if realLvl > 0 then
                 totalILvl = totalILvl + realLvl
                 count = count + 1
-                if slot == 16 and is2H and not oh then
+                if slot == 16 and not oh and (is2H or loc == "INVTYPE_2HWEAPON" or loc == "INVTYPE_RANGED" or loc == "INVTYPE_RANGEDRIGHT") then
                     totalILvl = totalILvl + realLvl
                     count = count + 1
                 end
@@ -375,7 +375,7 @@ function TG:ScanUnit(unit, showUI)
                 if totSoc > baseSoc then slotProf = slotProf or "BS"; d.profs["BS"] = true end
             end
             if GetItemGem then
-                local JC_EYES = { [76697]=true,[76698]=true,[76699]=true,[76700]=true,[76701]=true,[83141]=true,[83142]=true,[83143]=true,[83144]=true,[83145]=true,[83146]=true,[83147]=true,[83148]=true,[83149]=true }
+                local JC_EYES = { [83141]=true,[83142]=true,[83143]=true,[83144]=true,[83145]=true,[83146]=true,[83147]=true,[83148]=true,[83149]=true,[83150]=true,[83151]=true,[83152]=true,[83153]=true,[83154]=true,[83155]=true }
                 for g = 1, 3 do
                     local _, gLink = GetItemGem(link, g)
                     local gId = gLink and tonumber(string.match(gLink, "item:(%d+)"))
@@ -484,6 +484,7 @@ ev:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 ev:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 ev:RegisterEvent("UNIT_STATS")
 ev:RegisterEvent("UNIT_AURA")
+ev:RegisterEvent("PLAYER_LOGOUT")
 
 ev:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == addonName then
@@ -492,7 +493,7 @@ ev:SetScript("OnEvent", function(self, event, arg1)
         if TG.InitSync then TG:InitSync() end
 
     elseif event == "PLAYER_ENTERING_WORLD" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2 loaded. Type |cffffd100/tg|r to open or |cffffd100/tg help|r for commands.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3 loaded. Type |cffffd100/tg|r to open or |cffffd100/tg help|r for commands.")
         TG:ScanUnit("player", false)
         if TG.SaveCurrentAlt and TG.Cache[GetUnitName("player", true)] then
             TG:SaveCurrentAlt(TG.Cache[GetUnitName("player", true)])
@@ -503,6 +504,12 @@ ev:SetScript("OnEvent", function(self, event, arg1)
         TG:ScanUnit("player", false)
         if TG.Frame and TG.Frame:IsShown() and TG.CurrentData and TG.CurrentData.isSelf then
             TG:ScanUnit("player", true)
+        end
+
+    elseif event == "PLAYER_LOGOUT" then
+        TG:ScanUnit("player", false)
+        if TG.SaveCurrentAlt and TG.Cache[GetUnitName("player", true)] then
+            TG:SaveCurrentAlt(TG.Cache[GetUnitName("player", true)])
         end
 
     elseif event == "UNIT_AURA" then
@@ -615,7 +622,7 @@ SlashCmdList["TWINGEAR"] = function(msg)
     if not TG.Frame then return end
     local cmd = string.lower(strtrim(msg or ""))
     if cmd == "help" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.2 commands:")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100Twin|r|cff00ff00Gear|r v2.2.3 commands:")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg|r - Toggle main window")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg scan|r - Open Group Scan & scan party/raid")
         DEFAULT_CHAT_FRAME:AddMessage("  |cffffd100/tg tooltip|r - Toggle iLvl in player tooltip")
