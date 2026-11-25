@@ -15,7 +15,7 @@
 </p>
 
 
-# ⚔️ TwinGear v2.2.4 — The Ultimate Gear Audit, Stat Engine, Group & Raid Scanner & Account Roster for TwinStar (MoP 5.4.8)
+# ⚔️ TwinGear v2.2.5 — The Ultimate Gear Audit, Stat Engine, Group & Raid Scanner & Account Roster for TwinStar (MoP 5.4.8)
 
 **TwinGear** is a zero-bloat, all-in-one character audit, live stat priority advisor, group/raid readiness scanner (5/10/25/40 players), and account-wide alt manager for **TwinStar WoW — Mists of Pandaria 5.4.8 (Helios & Persés)**, supporting all **11 classes, 34 specs**.
 
@@ -48,13 +48,13 @@ Manage your entire TwinStar account from one place, featuring an overview of up 
 | `/tg scan` | Run a party/raid scan |
 | `/tg tooltip` / `/tg minimap` / `/tg reset` | Toggle mouseover tooltip, minimap icon, or reset window |
 | `/tgclearalts` | Clear the saved character roster |
-| **Key Bindings** | Configure in `Esc -> Key Bindings -> TwinGear 2.2.4` |
+| **Key Bindings** | Configure in `Esc -> Key Bindings -> TwinGear 2.2.5` |
 
 ---
 
 ### 📥 Download & Installation
 
-1. Download **`TwinGear-2.2.4.zip`** from the official [Latest Release](https://github.com).
+1. Download **`TwinGear-2.2.5.zip`** from the official [Latest Release](https://github.com).
 2. Extract the archive.
 3. Copy the **`TwinGear`** folder into `World of Warcraft\Interface\AddOns\`.
 4. Restart the game or type `/reload`.
