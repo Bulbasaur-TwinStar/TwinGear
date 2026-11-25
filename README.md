@@ -54,7 +54,7 @@ Manage your entire TwinStar account from one place, featuring an overview of up 
 
 ### 📥 Download & Installation
 
-1. Download **`TwinGear-2.2.5.zip`** from the official [Latest Release](https://github.com).
+1. Download **`TwinGear-2.2.5.zip`** from the official [Latest Release](https://github.com/Bulbasaur-TwinStar/TwinGear).
 2. Extract the archive.
 3. Copy the **`TwinGear`** folder into `World of Warcraft\Interface\AddOns\`.
 4. Restart the game or type `/reload`.
